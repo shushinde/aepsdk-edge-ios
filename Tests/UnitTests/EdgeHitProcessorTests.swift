@@ -496,12 +496,17 @@ class EdgeHitProcessorTests: XCTestCase, AnyCodableAsserts {
         assertProcessHit(entity: entity, sendsNetworkRequest: false, returns: true)
     }
 
-    func testProcessHit_experienceEvent_addsEventToWaitingEventsList() {
+    func testProcessHit_experienceEvent_onRetry_removesWaitingEventsToAvoidLeak() {
+        // On a recoverable (retry) response the network layer suppresses onComplete, so the waiting
+        // events registered under this requestId are never removed by the completion path. The queue
+        // re-processes the same entity under a fresh requestId, which re-registers it — so the old
+        // registration must be dropped on retry, otherwise sentEventsWaitingResponse (and
+        // nextCompletionIndex) grow unbounded across retries.
         let edgeEntity = getEdgeDataEntity(event: experienceEvent, configuration: defaultEdgeConfig, identityMap: defaultIdentityMap)
         let entity = DataEntity(uniqueIdentifier: "test-uuid", timestamp: Date(), data: try? JSONEncoder().encode(edgeEntity))
 
         let expectation = XCTestExpectation(description: "Callback should be invoked signaling if the hit was processed or not")
-        // return recoverable error so the waiting event is not removed onComplete() before the assertion
+        // 408 is a recoverable error → the hit is retried.
         mockNetworkService.setMockResponse(
             url: INTERACT_ENDPOINT_PROD,
             httpMethod: .post,
@@ -515,7 +520,8 @@ class EdgeHitProcessorTests: XCTestCase, AnyCodableAsserts {
                 error: nil))
 
         // test
-        hitProcessor.processHit(entity: entity) { _ in
+        hitProcessor.processHit(entity: entity) { success in
+            XCTAssertFalse(success) // recoverable → retry
             expectation.fulfill()
         }
 
@@ -530,9 +536,8 @@ class EdgeHitProcessorTests: XCTestCase, AnyCodableAsserts {
             return
         }
 
-        // verify
-        let waitingEvents = networkResponseHandler.getWaitingEvents(requestId: requestId)
-        XCTAssertEqual(1, waitingEvents?.count)
+        // verify: the waiting events for the retried requestId were removed (no leak).
+        XCTAssertNil(networkResponseHandler.getWaitingEvents(requestId: requestId))
     }
 
     // MARK: - Consent Update
@@ -575,12 +580,15 @@ class EdgeHitProcessorTests: XCTestCase, AnyCodableAsserts {
         assertProcessHit(entity: entity, sendsNetworkRequest: false, returns: true)
     }
 
-    func testProcessHit_consentUpdateEvent_addsEventToWaitingEventsList() {
+    func testProcessHit_consentUpdateEvent_onRetry_removesWaitingEventsToAvoidLeak() {
+        // Consent updates go through the same single-hit path; on a recoverable (retry) response their
+        // waiting events must also be removed to avoid the same unbounded leak (see the ExperienceEvent
+        // variant of this test).
         let edgeEntity = getEdgeDataEntity(event: consentUpdateEvent, configuration: defaultEdgeConfig, identityMap: defaultIdentityMap)
         let entity = DataEntity(uniqueIdentifier: "test-uuid", timestamp: Date(), data: try? JSONEncoder().encode(edgeEntity))
 
         let expectation = XCTestExpectation(description: "Callback should be invoked signaling if the hit was processed or not")
-        // return recoverable error so the waiting event is not removed onComplete() before the assertion
+        // 408 is a recoverable error → the hit is retried.
         mockNetworkService.setMockResponse(
             url: CONSENT_ENDPOINT,
             httpMethod: .post,
@@ -594,7 +602,8 @@ class EdgeHitProcessorTests: XCTestCase, AnyCodableAsserts {
                 error: nil))
 
         // test
-        hitProcessor.processHit(entity: entity) { _ in
+        hitProcessor.processHit(entity: entity) { success in
+            XCTAssertFalse(success) // recoverable → retry
             expectation.fulfill()
         }
 
@@ -608,9 +617,8 @@ class EdgeHitProcessorTests: XCTestCase, AnyCodableAsserts {
             return
         }
 
-        // verify
-        let waitingEvents = networkResponseHandler.getWaitingEvents(requestId: requestId)
-        XCTAssertEqual(1, waitingEvents?.count)
+        // verify: the waiting events for the retried requestId were removed (no leak).
+        XCTAssertNil(networkResponseHandler.getWaitingEvents(requestId: requestId))
     }
 
     /// Tests that when the consent network request fails with a recoverable error and retry-after header (in seconds), sets this value as timeout for the retry
@@ -1085,6 +1093,48 @@ class EdgeHitProcessorTests: XCTestCase, AnyCodableAsserts {
         wait(for: [expectation], timeout: 1)
         mockNetworkService.assertAllNetworkRequestExpectations(ignoreUnexpectedRequests: false)
         XCTAssertEqual(1, mockNetworkService.getNetworkRequestsWith(url: INTERACT_ENDPOINT_PROD, httpMethod: .post).count)
+    }
+
+    /// Regression guard for the waiting-events leak on batch retry: when a batch of N events gets a
+    /// recoverable (retry) response, the network layer suppresses onComplete, so the N waiting events
+    /// registered under this requestId must be removed here. Otherwise the queue re-processes the batch
+    /// under a fresh requestId (re-registering N events) and the old N-event entry leaks every retry.
+    func testProcessBatch_onRetry_removesWaitingEventsToAvoidLeak() {
+        let batchingEdgeConfig = batchingConfig()
+        let edgeEntity1 = getEdgeDataEntity(event: batchableExperienceEvent, configuration: batchingEdgeConfig, identityMap: defaultIdentityMap)
+        let entity1 = DataEntity(uniqueIdentifier: "test-uuid-1", timestamp: Date(), data: try? JSONEncoder().encode(edgeEntity1))
+        let edgeEntity2 = getEdgeDataEntity(event: batchableExperienceEvent, configuration: batchingEdgeConfig, identityMap: defaultIdentityMap)
+        let entity2 = DataEntity(uniqueIdentifier: "test-uuid-2", timestamp: Date(), data: try? JSONEncoder().encode(edgeEntity2))
+
+        // 408 is a recoverable error → the batch is retried (.retryBatch outcome).
+        mockNetworkService.setMockResponse(
+            url: INTERACT_ENDPOINT_PROD,
+            httpMethod: .post,
+            responseConnection: HttpConnection(
+                data: "{}".data(using: .utf8),
+                response: HTTPURLResponse(url: url, statusCode: 408, httpVersion: nil, headerFields: nil),
+                error: nil))
+        mockNetworkService.setExpectationForNetworkRequest(url: INTERACT_ENDPOINT_PROD, httpMethod: .post)
+        let expectation = XCTestExpectation(description: "processBatch completion invoked")
+
+        hitProcessor.processBatch(entities: [entity1, entity2]) { outcome in
+            guard case .retryBatch = outcome else {
+                XCTFail("Expected .retryBatch outcome, got \(outcome)")
+                return
+            }
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 1)
+
+        guard let requestUrl = mockNetworkService.getNetworkRequestsWith(url: INTERACT_ENDPOINT_PROD, httpMethod: .post).first?.url,
+              let requestId = requestUrl["requestId"] else {
+            XCTFail("missing requestId in the request url")
+            return
+        }
+
+        // verify: the batch's waiting events were removed on retry (no leak).
+        XCTAssertNil(networkResponseHandler.getWaitingEvents(requestId: requestId))
     }
 
     /// Regression guard for the queue-remove bug: a mixed window (ExperienceEvent then Consent) must

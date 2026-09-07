@@ -404,6 +404,11 @@ class EdgeHitProcessor: HitProcessing {
 
             guard success else {
                 self.entityRetryIntervalMapping[entityId] = retryInterval
+                // On retry the network layer suppresses onComplete, so this requestId's waiting events
+                // are never removed. The queue re-processes the same entities under a fresh requestId,
+                // which re-registers them — so drop the now-orphaned registration here to avoid an
+                // unbounded leak in `sentEventsWaitingResponse` / `nextCompletionIndex` across retries.
+                _ = self.networkResponseHandler.removeWaitingEvents(requestId: edgeHit.requestId)
                 completion(.retryBatch(retryInterval: retryInterval ?? EdgeConstants.Defaults.RETRY_INTERVAL))
                 return
             }
@@ -506,6 +511,14 @@ class EdgeHitProcessor: HitProcessing {
             if let self = self {
                 // remove any retry interval if success, otherwise add to retry mapping
                 self.entityRetryIntervalMapping[entityId] = success ? nil : retryInterval
+
+                if !success {
+                    // On retry the network layer suppresses onComplete, so this requestId's waiting
+                    // event is never removed. The queue re-processes the same entity under a fresh
+                    // requestId, which re-registers it — so drop the now-orphaned registration here to
+                    // avoid an unbounded leak in `sentEventsWaitingResponse` / `nextCompletionIndex`.
+                    _ = self.networkResponseHandler.removeWaitingEvents(requestId: edgeHit.requestId)
+                }
             }
             completion(success)
         }

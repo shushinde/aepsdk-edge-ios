@@ -1064,24 +1064,12 @@ class NetworkResponseHandlerFunctionalTests: TestBase, AnyCodableAsserts {
 
         let dispatchEvents = getDispatchedEventsWith(type: TestConstants.EventType.EDGE, source: TestConstants.EventSource.ERROR_RESPONSE_CONTENT)
         XCTAssertEqual(2, dispatchEvents.count)
-        // Event chained to event2 as event index is 1
-        XCTAssertEqual(event2.id, dispatchEvents[0].parentID)
 
-        let expected_event1 = """
-        {
-          "requestEventId": "\(event2.id.uuidString)",
-          "requestId": "123",
-          "status": 2003,
-          "title": "Failed to process personalization event"
-        }
-        """
+        // Merged index-ordered processing dispatches ascending by eventIndex: the warning at eventIndex 0
+        // (event1) is dispatched before the error at eventIndex 1 (event2).
+        XCTAssertEqual(event1.id, dispatchEvents[0].parentID)
 
-        assertEqual(expected: expected_event1, actual: dispatchEvents[0])
-
-        // Event chained to event1 as event index is 0
-        XCTAssertEqual(event1.id, dispatchEvents[1].parentID)
-
-        let expected_event2 = """
+        let expected_warningForEvent1 = """
         {
           "report": {
             "cause": {
@@ -1097,7 +1085,20 @@ class NetworkResponseHandlerFunctionalTests: TestBase, AnyCodableAsserts {
         }
         """
 
-        assertEqual(expected: expected_event2, actual: dispatchEvents[1])
+        assertEqual(expected: expected_warningForEvent1, actual: dispatchEvents[0])
+
+        XCTAssertEqual(event2.id, dispatchEvents[1].parentID)
+
+        let expected_errorForEvent2 = """
+        {
+          "requestEventId": "\(event2.id.uuidString)",
+          "requestId": "123",
+          "status": 2003,
+          "title": "Failed to process personalization event"
+        }
+        """
+
+        assertEqual(expected: expected_errorForEvent2, actual: dispatchEvents[1])
     }
 
     func testProcessResponseOnSuccess_WhenEventHandleAndErrorAndWarning_dispatchesThreeEvents() {
@@ -1204,6 +1205,71 @@ class NetworkResponseHandlerFunctionalTests: TestBase, AnyCodableAsserts {
         """
 
         assertEqual(expected: expected_errorEvent2, actual: dispatchErrorEvents[1])
+    }
+
+    /// Reviewer-reported ordering bug, end-to-end: in ONE success response a handle at eventIndex 2 must
+    /// not complete event 0 before event 0's error (eventIndex 0) is recorded, otherwise event 0's
+    /// onError is dropped (and the error leaks). Merged index-ordered processing records the error before
+    /// the completion boundary advances past index 0, so onError fires.
+    func testProcessResponseOnSuccess_singleResponse_higherIndexHandle_lowerIndexError_deliversOnErrorForLowerEvent() {
+        setExpectationEvent(type: TestConstants.EventType.EDGE, source: TestConstants.EventSource.ERROR_RESPONSE_CONTENT, expectedCount: 1)
+
+        let requestId = "123"
+        let ev0 = Event(name: "ev0", type: "eventType", source: "eventSource", data: nil)
+        let ev1 = Event(name: "ev1", type: "eventType", source: "eventSource", data: nil)
+        let ev2 = Event(name: "ev2", type: "eventType", source: "eventSource", data: nil)
+        networkResponseHandler.addWaitingEvents(requestId: requestId, batchedEvents: [ev0, ev1, ev2])
+
+        let callback = CapturingEdgeCallbackWithError()
+        CompletionHandlersManager.shared.registerErrorCallback(forRequestEventId: ev0.id.uuidString, callback: callback)
+
+        let jsonResponse = "{\n" +
+            "  \"handle\": [{ \"type\": \"pairedeventexample\", \"eventIndex\": 2, \"payload\": [{ \"id\": \"h2\" }] }],\n" +
+            "  \"errors\": [{ \"status\": 503, \"title\": \"Service temporarily unavailable\", \"report\": { \"eventIndex\": 0 } }]\n" +
+            "}"
+        networkResponseHandler.processResponseOnSuccess(jsonResponse: jsonResponse, requestId: requestId)
+        networkResponseHandler.processResponseOnComplete(requestId: requestId)
+
+        // Primary symptom: event 0's onError fires with its error (dropped before the fix).
+        XCTAssertEqual(1, callback.receivedErrors.count)
+        XCTAssertEqual(503, callback.receivedErrors.first?.status)
+
+        // Integration: the error response event is dispatched and paired to event 0.
+        let dispatchErrorEvents = getDispatchedEventsWith(type: TestConstants.EventType.EDGE, source: TestConstants.EventSource.ERROR_RESPONSE_CONTENT, timeout: 5)
+        XCTAssertEqual(1, dispatchErrorEvents.count)
+        XCTAssertEqual(ev0.id, dispatchErrorEvents[0].parentID)
+
+        // The higher-index handle is paired to event 2.
+        let dispatchHandleEvents = getDispatchedEventsWith(type: TestConstants.EventType.EDGE, source: "pairedeventexample")
+        XCTAssertEqual(1, dispatchHandleEvents.count)
+        XCTAssertEqual(ev2.id, dispatchHandleEvents[0].parentID)
+    }
+
+    /// A single 200 response where event 0 carries BOTH a handle and an error (eventIndex 0), plus a
+    /// higher-index handle (2) that advances the completion boundary. Event 0 must receive its handle via
+    /// onComplete AND its error via onError.
+    func testProcessResponseOnSuccess_singleResponse_sameEventHandleAndError_deliversBothCallbacks() {
+        let requestId = "123"
+        let ev0 = Event(name: "ev0", type: "eventType", source: "eventSource", data: nil)
+        let ev1 = Event(name: "ev1", type: "eventType", source: "eventSource", data: nil)
+        let ev2 = Event(name: "ev2", type: "eventType", source: "eventSource", data: nil)
+        networkResponseHandler.addWaitingEvents(requestId: requestId, batchedEvents: [ev0, ev1, ev2])
+
+        let callback = CapturingEdgeCallbackWithError()
+        CompletionHandlersManager.shared.registerErrorCallback(forRequestEventId: ev0.id.uuidString, callback: callback)
+
+        let jsonResponse = "{\n" +
+            "  \"handle\": [\n" +
+            "    { \"type\": \"pairedeventexample\", \"eventIndex\": 0, \"payload\": [{ \"id\": \"h0\" }] },\n" +
+            "    { \"type\": \"pairedeventexample\", \"eventIndex\": 2, \"payload\": [{ \"id\": \"h2\" }] }\n" +
+            "  ],\n" +
+            "  \"errors\": [{ \"status\": 503, \"title\": \"err0\", \"report\": { \"eventIndex\": 0 } }]\n" +
+            "}"
+        networkResponseHandler.processResponseOnSuccess(jsonResponse: jsonResponse, requestId: requestId)
+        networkResponseHandler.processResponseOnComplete(requestId: requestId)
+
+        XCTAssertEqual(1, callback.receivedHandles.count)
+        XCTAssertEqual(1, callback.receivedErrors.count)
     }
 
     // MARK: locationHint:result
@@ -1841,5 +1907,19 @@ class NetworkResponseHandlerFunctionalTests: TestBase, AnyCodableAsserts {
         XCTAssertEqual(2, completes.count)
         XCTAssertEqual(e0.id, completes[0].parentID)
         XCTAssertEqual(e1.id, completes[1].parentID)
+    }
+}
+
+/// Captures the handles and errors delivered to an `EdgeCallbackWithError` for assertion in tests.
+private class CapturingEdgeCallbackWithError: EdgeCallbackWithError {
+    var receivedHandles: [EdgeEventHandle] = []
+    var receivedErrors: [EdgeEventError] = []
+
+    func onComplete(_ handles: [EdgeEventHandle]) {
+        receivedHandles.append(contentsOf: handles)
+    }
+
+    func onError(_ errors: [EdgeEventError]) {
+        receivedErrors.append(contentsOf: errors)
     }
 }
