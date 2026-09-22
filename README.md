@@ -1,8 +1,7 @@
 # Adobe Experience Platform Edge Network Mobile Extension
 
-[![CocoaPods](https://img.shields.io/github/v/release/adobe/aepsdk-edge-ios?label=CocoaPods&logo=apple&logoColor=white&color=orange)](https://cocoapods.org/pods/AEPEdge)
 [![SPM](https://img.shields.io/github/v/release/adobe/aepsdk-edge-ios?label=SPM&logo=apple&logoColor=white&color=orange)](https://github.com/adobe/aepsdk-edge-ios/releases)
-[![CircleCI](https://img.shields.io/circleci/project/github/adobe/aepsdk-edge-ios/main.svg?label=Build&logo=circleci)](https://circleci.com/gh/adobe/workflows/aepsdk-edge-ios)
+[![CircleCI](https://img.shields.io/circleci/project/github/shushinde/aepsdk-edge-ios/main.svg?label=Build&logo=circleci)](https://circleci.com/gh/shushinde/workflows/aepsdk-edge-ios)
 [![Code Coverage](https://img.shields.io/codecov/c/github/adobe/aepsdk-edge-ios/main.svg?label=Coverage&logo=codecov)](https://codecov.io/gh/adobe/aepsdk-edge-ios/branch/main)
 
 ## About this project
@@ -19,35 +18,7 @@ For more details, see the [Adobe Experience Platform Edge Network](https://devel
 
 ## Installation
 
-The following installation options are currently supported:
-
-### CocoaPods
-
-Refer to the [CocoaPods documentation](https://guides.cocoapods.org/using/using-cocoapods.html) for more details.
-
-```ruby
-# Podfile
-use_frameworks!
-
-# For app development, include all of the following dependencies
-target 'YOUR_TARGET_NAME' do
-  pod 'AEPCore'
-  pod 'AEPEdge'
-  pod 'AEPEdgeIdentity'
-end
-
-# For extension development, include AEPCore, AEPEdge, and their dependencies
-target 'YOUR_TARGET_NAME' do
-  pod 'AEPCore'
-  pod 'AEPEdge'
-end
-```
-
-Replace `YOUR_TARGET_NAME` in the `Podfile`, and then, in the Podfile directory, run:
-
-```shell
-$ pod install
-```
+The following installation option is currently supported:
 
 ### Swift Package Manager
 
