@@ -3,6 +3,7 @@ PROJECT_NAME = $(EXTENSION_NAME)
 SCHEME_NAME_XCFRAMEWORK = AEPEdgeXCF
 TEST_APP_IOS_SCHEME = TestAppiOS
 TEST_APP_TVOS_SCHEME = TestApptvOS
+TEST_APP_PROJECT = TestApps/TestAppSwiftUI/TestApp.xcodeproj
 
 CURR_DIR := ${CURDIR}
 IOS_SIMULATOR_ARCHIVE_PATH = $(CURR_DIR)/build/ios_simulator.xcarchive/Products/Library/Frameworks/
@@ -75,16 +76,16 @@ zip:
 	cd build && zip -r -X $(PROJECT_NAME).xcframework.zip $(PROJECT_NAME).xcframework/
 	xcrun swift package compute-checksum build/$(PROJECT_NAME).xcframework.zip
 
-build-app: setup
+build-app:
 	@echo "######################################################################"
 	@echo "### Building $(TEST_APP_IOS_SCHEME)"
 	@echo "######################################################################"
-	xcodebuild clean build -workspace $(PROJECT_NAME).xcworkspace -scheme $(TEST_APP_IOS_SCHEME) -destination 'generic/platform=iOS Simulator'
+	xcodebuild clean build -project $(TEST_APP_PROJECT) -scheme $(TEST_APP_IOS_SCHEME) -destination 'generic/platform=iOS Simulator'
 
 	@echo "######################################################################"
 	@echo "### Building $(TEST_APP_TVOS_SCHEME)"
 	@echo "######################################################################"
-	xcodebuild clean build -workspace $(PROJECT_NAME).xcworkspace -scheme $(TEST_APP_TVOS_SCHEME) -destination 'generic/platform=tvOS Simulator'
+	xcodebuild clean build -project $(TEST_APP_PROJECT) -scheme $(TEST_APP_TVOS_SCHEME) -destination 'generic/platform=tvOS Simulator'
 
 test: test-SPM-integration
 

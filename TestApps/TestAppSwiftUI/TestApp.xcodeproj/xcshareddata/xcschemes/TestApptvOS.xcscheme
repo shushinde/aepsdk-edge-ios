@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "2EDD05BE286EAA7000229CB2"
+               BlueprintIdentifier = "7B88BBFC464FAAD42F850CC3"
                BuildableName = "TestApptvOS.app"
                BlueprintName = "TestApptvOS"
-               ReferencedContainer = "container:AEPEdge.xcodeproj">
+               ReferencedContainer = "container:TestApp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -44,10 +44,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "2EDD05BE286EAA7000229CB2"
+            BlueprintIdentifier = "7B88BBFC464FAAD42F850CC3"
             BuildableName = "TestApptvOS.app"
             BlueprintName = "TestApptvOS"
-            ReferencedContainer = "container:AEPEdge.xcodeproj">
+            ReferencedContainer = "container:TestApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -61,10 +61,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "2EDD05BE286EAA7000229CB2"
+            BlueprintIdentifier = "7B88BBFC464FAAD42F850CC3"
             BuildableName = "TestApptvOS.app"
             BlueprintName = "TestApptvOS"
-            ReferencedContainer = "container:AEPEdge.xcodeproj">
+            ReferencedContainer = "container:TestApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

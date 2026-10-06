@@ -1,15 +1,6 @@
 {
-  "originHash" : "e85dca986ee831d7b39587016a369bb954a64bc569df868583721e2850df5bff",
+  "originHash" : "01cada0ed1f962af02980e548ddea462c1e756077bd208ef29e4d8f2b619340e",
   "pins" : [
-    {
-      "identity" : "aepsdk-assurance-ios",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/adobe/aepsdk-assurance-ios",
-      "state" : {
-        "revision" : "b8f0cc1aacc64b5ff7ec86460c5df7405b446044",
-        "version" : "5.0.3"
-      }
-    },
     {
       "identity" : "aepsdk-core-ios",
       "kind" : "remoteSourceControl",
