@@ -40,7 +40,7 @@ let package = Package(
     ],
     dependencies: [
         .package(name: \"AEPCore\", url: \"https://github.com/shushinde/aepsdk-core-ios.git\", .upToNextMajor(from: \"5.13.0\")),
-        .package(name: \"AEPEdgeIdentity\", url: \"https://github.com/shushinde/aepsdk-edgeidentity-ios.git\", .upToNextMajor(from: \"5.2.0\")),
+        .package(name: \"AEPEdgeIdentity\", url: \"https://github.com/shushinde/aepsdk-edgeidentity-ios.git\", .upToNextMajor(from: \"5.1.0\")),
         .package(name: \"AEPEdge\", path: \"../\")
     ],
     targets: [
