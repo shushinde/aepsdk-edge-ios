@@ -20,20 +20,11 @@
       }
     },
     {
-      "identity" : "aepsdk-edgeconsent-ios",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/adobe/aepsdk-edgeconsent-ios.git",
-      "state" : {
-        "revision" : "92d246684e6d216c1e21b0a219a41c0d4c19e0a6",
-        "version" : "5.0.2"
-      }
-    },
-    {
       "identity" : "aepsdk-edgeidentity-ios",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/shushinde/aepsdk-edgeidentity-ios",
       "state" : {
-        "revision" : "92dc9d14c6199abb03cc3b69690a05aecc15972a",
+        "revision" : "c9d8ed550e57b479cf92c8c8c6f75f999735a5ed",
         "version" : "5.1.0"
       }
     },

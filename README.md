@@ -112,7 +112,7 @@ This command builds and archives a consumer package; it does not execute the uni
 The migration is not yet complete:
 
 - The package unit and functional suites pass on iOS and tvOS with Core 5.13.0 (`5304424`) and EdgeIdentity 5.1.0 (`92dc9d1`). These results used unchanged release checkouts as local workspace overrides; remote resolution on the validation machine remains blocked by Git's `safe.bareRepository=explicit` setting. The suites still need to be wired into Makefile and CI; consumer integration builds do not execute them.
-- `Tests/FunctionalTests/Edge+ConsentTests.swift` remains excluded from the package tests. Consent depends on Edge, so these tests need a separate consumer test graph and a compatible Consent dependency.
+- Consent integration tests have been removed from this repository for future relocation to the EdgeConsent project. The library's native functional tests no longer depend on AEPEdgeConsent; this coverage remains pending until the tests are added there.
 - TestApps are isolated from the library project, but their builds remain blocked by dependency-origin conflicts: local Edge depends on forked Core/EdgeIdentity, while the TestApp's Adobe dependencies request upstream packages with the same identities. Project separation does not resolve this conflict. No TestApp lockfile is committed until this graph resolves successfully.
 - On the validation machine, TestApp dependency resolution also fails before graph validation because Git's `safe.bareRepository=explicit` setting rejects SwiftPM's bare repository operations. This setting has not been weakened.
 - The tutorials still use CocoaPods; their migration remains deferred.

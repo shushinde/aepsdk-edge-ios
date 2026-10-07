@@ -43,7 +43,6 @@
 		4CBEE5E629D637E90084BC50 /* UpstreamIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBEE5E229D637E90084BC50 /* UpstreamIntegrationTests.swift */; };
 		4CBEE5FD29FB47270084BC50 /* TestConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A473C52485938D00D31710 /* TestConstants.swift */; };
 		4CBEE6152A156FB20084BC50 /* CompletionHandlerFunctionalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBEE60D2A156FB10084BC50 /* CompletionHandlerFunctionalTests.swift */; };
-		4CBEE6192A1571DC0084BC50 /* Edge+ConsentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBEE6182A1571DC0084BC50 /* Edge+ConsentTests.swift */; };
 		4CBEE61B2A1572E50084BC50 /* Edge+PublicAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBEE61A2A1572E50084BC50 /* Edge+PublicAPITests.swift */; };
 		4CBEE61D2A1574CE0084BC50 /* EdgePathOverwriteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBEE61C2A1574CE0084BC50 /* EdgePathOverwriteTests.swift */; };
 		4CBEE61F2A15764B0084BC50 /* IdentityStateFunctionalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBEE61E2A15764B0084BC50 /* IdentityStateFunctionalTests.swift */; };
@@ -54,16 +53,13 @@
 		5498316E0EF96A187C554E76 /* SharedStateReaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7B22645DB9C48815995C56 /* SharedStateReaderTests.swift */; };
 		7C2745AEA9EC68DD877FE68B /* EdgeBatchingHitQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A321A42EE7CD7AC876A8BE8A /* EdgeBatchingHitQueueTests.swift */; };
 		8A317937E7469F58CE8AD84C /* EdgeCallbackWithError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3157E3F5ECD3431FDBB351 /* EdgeCallbackWithError.swift */; };
-		9482A7F5305C2EEE00B34623 /* AEPEdgeConsent in Frameworks */ = {isa = PBXBuildFile; productRef = 9482A7F4305C2EEE00B34623 /* AEPEdgeConsent */; };
 		9482A7F8305C2EFE00B34623 /* AEPEdgeIdentity in Frameworks */ = {isa = PBXBuildFile; productRef = 9482A7F7305C2EFE00B34623 /* AEPEdgeIdentity */; };
 		9482A80C305D461800B34623 /* AEPEdge in Frameworks */ = {isa = PBXBuildFile; productRef = 9482A80B305D461800B34623 /* AEPEdge */; };
 		9482A813305D46B000B34623 /* AEPEdge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D444995F2519506B0093B364 /* AEPEdge.framework */; };
 		9482A814305D46B000B34623 /* AEPEdge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D444995F2519506B0093B364 /* AEPEdge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9482A82B30605E4C00B34623 /* AEPTestUtils in Frameworks */ = {isa = PBXBuildFile; productRef = 9482A82A30605E4C00B34623 /* AEPTestUtils */; };
 		9482A82E30606AB000B34623 /* AEPCore in Frameworks */ = {isa = PBXBuildFile; productRef = 9482A82D30606AB000B34623 /* AEPCore */; };
-		9482A82F30606AB000B34623 /* AEPCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 9482A82D30606AB000B34623 /* AEPCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		9482A83130606AB600B34623 /* AEPCore in Frameworks */ = {isa = PBXBuildFile; productRef = 9482A83030606AB600B34623 /* AEPCore */; };
-		9482A83230606AB600B34623 /* AEPCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 9482A83030606AB600B34623 /* AEPCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		AD7C4869E9DEACAFBC75A127 /* EdgeDataEntityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D0A46E5E96B2F3FFF4F9B26 /* EdgeDataEntityTests.swift */; };
 		BADE531EF1F8BA6C24BF8818 /* EdgeBundledBatchingConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 314D898C6438199FBCA790A7 /* EdgeBundledBatchingConfig.swift */; };
 		BE3A74DB94CCBEDE9F4145DD /* EdgeBundledBatchingConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E742414B220FB400B4D6FDE5 /* EdgeBundledBatchingConfigTests.swift */; };
@@ -170,7 +166,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9482A82F30606AB000B34623 /* AEPCore in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -181,7 +176,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9482A83230606AB600B34623 /* AEPCore in Embed Frameworks */,
 				9482A814305D46B000B34623 /* AEPEdge.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -225,7 +219,6 @@
 		4CBEE5E029D637170084BC50 /* UpstreamIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UpstreamIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CBEE5E229D637E90084BC50 /* UpstreamIntegrationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpstreamIntegrationTests.swift; sourceTree = "<group>"; };
 		4CBEE60D2A156FB10084BC50 /* CompletionHandlerFunctionalTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompletionHandlerFunctionalTests.swift; sourceTree = "<group>"; };
-		4CBEE6182A1571DC0084BC50 /* Edge+ConsentTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Edge+ConsentTests.swift"; sourceTree = "<group>"; };
 		4CBEE61A2A1572E50084BC50 /* Edge+PublicAPITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Edge+PublicAPITests.swift"; sourceTree = "<group>"; };
 		4CBEE61C2A1574CE0084BC50 /* EdgePathOverwriteTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EdgePathOverwriteTests.swift; sourceTree = "<group>"; };
 		4CBEE61E2A15764B0084BC50 /* IdentityStateFunctionalTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdentityStateFunctionalTests.swift; sourceTree = "<group>"; };
@@ -350,7 +343,6 @@
 				9482A80C305D461800B34623 /* AEPEdge in Frameworks */,
 				9482A7F8305C2EFE00B34623 /* AEPEdgeIdentity in Frameworks */,
 				9482A82B30605E4C00B34623 /* AEPTestUtils in Frameworks */,
-				9482A7F5305C2EEE00B34623 /* AEPEdgeConsent in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -560,7 +552,6 @@
 				BF0C093B2462159400892B5D /* util */,
 				D4A473CF2485B86D00D31710 /* AEPEdgeFunctionalTests.swift */,
 				4CBEE60D2A156FB10084BC50 /* CompletionHandlerFunctionalTests.swift */,
-				4CBEE6182A1571DC0084BC50 /* Edge+ConsentTests.swift */,
 				4CBEE61A2A1572E50084BC50 /* Edge+PublicAPITests.swift */,
 				2ECFB7512AB391F400653128 /* EdgeDatastreamConfigOverrideTests.swift */,
 				4CBEE61C2A1574CE0084BC50 /* EdgePathOverwriteTests.swift */,
@@ -715,9 +706,8 @@
 			);
 			mainGroup = D4D5B4DE242EBB1600CAB6E4;
 			packageReferences = (
-				9482A7F3305C2EEE00B34623 /* XCRemoteSwiftPackageReference "aepsdk-edgeconsent-ios" */,
 				9482A7F6305C2EFE00B34623 /* XCRemoteSwiftPackageReference "aepsdk-edgeidentity-ios" */,
-				9482A80A305D45FE00B34623 /* XCLocalSwiftPackageReference "aepsdk-edge-ios" */,
+				9482A80A305D45FE00B34623 /* XCLocalSwiftPackageReference "../aepsdk-edge-ios" */,
 				9482A82930605E4C00B34623 /* XCRemoteSwiftPackageReference "aepsdk-testutils-ios" */,
 				9482A82C30606AA100B34623 /* XCRemoteSwiftPackageReference "aepsdk-core-ios" */,
 			);
@@ -882,7 +872,6 @@
 				4CBEE61F2A15764B0084BC50 /* IdentityStateFunctionalTests.swift in Sources */,
 				4CBEE61B2A1572E50084BC50 /* Edge+PublicAPITests.swift in Sources */,
 				4C089BC52CF01AA900CB500C /* FunctionalTestConstants.swift in Sources */,
-				4CBEE6192A1571DC0084BC50 /* Edge+ConsentTests.swift in Sources */,
 				D48CBD2224A17EEA00A24BD8 /* TestXDMSchema.swift in Sources */,
 				BFDF25AB2BD02E58002114B6 /* EdgeQueuedEntityFunctionalTests.swift in Sources */,
 				4CBEE6252A157CB40084BC50 /* SampleFunctionalTests.swift in Sources */,
@@ -1338,21 +1327,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		9482A80A305D45FE00B34623 /* XCLocalSwiftPackageReference "aepsdk-edge-ios" */ = {
+		9482A80A305D45FE00B34623 /* XCLocalSwiftPackageReference "../aepsdk-edge-ios" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../aepsdk-edge-ios";
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		9482A7F3305C2EEE00B34623 /* XCRemoteSwiftPackageReference "aepsdk-edgeconsent-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/adobe/aepsdk-edgeconsent-ios.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.2;
-			};
-		};
 		9482A7F6305C2EFE00B34623 /* XCRemoteSwiftPackageReference "aepsdk-edgeidentity-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/shushinde/aepsdk-edgeidentity-ios";
@@ -1380,11 +1361,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		9482A7F4305C2EEE00B34623 /* AEPEdgeConsent */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9482A7F3305C2EEE00B34623 /* XCRemoteSwiftPackageReference "aepsdk-edgeconsent-ios" */;
-			productName = AEPEdgeConsent;
-		};
 		9482A7F7305C2EFE00B34623 /* AEPEdgeIdentity */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 9482A7F6305C2EFE00B34623 /* XCRemoteSwiftPackageReference "aepsdk-edgeidentity-ios" */;
@@ -1392,7 +1368,7 @@
 		};
 		9482A80B305D461800B34623 /* AEPEdge */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 9482A80A305D45FE00B34623 /* XCLocalSwiftPackageReference "aepsdk-edge-ios" */;
+			package = 9482A80A305D45FE00B34623 /* XCLocalSwiftPackageReference "../aepsdk-edge-ios" */;
 			productName = AEPEdge;
 		};
 		9482A82A30605E4C00B34623 /* AEPTestUtils */ = {

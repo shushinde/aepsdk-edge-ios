@@ -6,7 +6,7 @@
         "repositoryURL": "https://github.com/shushinde/aepsdk-core-ios.git",
         "state": {
           "branch": null,
-          "revision": "83e82b7ae6dfe4adb55bc9f24d3c67e23c62ef21",
+          "revision": "530442464baa90074f9f8e7e8c8034a06b25169a",
           "version": "5.13.0"
         }
       },
@@ -15,7 +15,7 @@
         "repositoryURL": "https://github.com/shushinde/aepsdk-edgeidentity-ios.git",
         "state": {
           "branch": null,
-          "revision": "92dc9d14c6199abb03cc3b69690a05aecc15972a",
+          "revision": "c9d8ed550e57b479cf92c8c8c6f75f999735a5ed",
           "version": "5.1.0"
         }
       },

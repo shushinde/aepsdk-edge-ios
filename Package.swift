@@ -52,7 +52,7 @@ let package = Package(
                         .product(name: "AEPTestUtils", package: "aepsdk-testutils-ios")
                     ],
                     path: "Tests",
-                    exclude: ["UnitTests", "UpstreamIntegrationTests", "FunctionalTests/Info.plist", "FunctionalTests/Edge+ConsentTests.swift"],
+                    exclude: ["UnitTests", "UpstreamIntegrationTests", "FunctionalTests/Info.plist"],
                     sources: ["FunctionalTests", "TestUtils"])
     ]
 )
